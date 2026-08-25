@@ -149,6 +149,7 @@ UPROGS=\
 	$U/_pingpong\
 	$U/_pingpongmsg\
 	$U/_printmem\
+	$U/_sandbox\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

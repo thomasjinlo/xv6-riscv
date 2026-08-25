@@ -23,3 +23,4 @@
 #define SYS_sync        22
 #define SYS_memavail    23
 #define SYS_vamemavail  24
+#define SYS_interpose   25

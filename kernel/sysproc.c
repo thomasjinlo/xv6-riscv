@@ -124,3 +124,28 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+/*
+ * Sets interpose mask on struct proc. Will later be used to restrict
+ * syscalls for the calling process and child.
+ *
+ * interpose_mask for SYS_open is 1 << 15 or 1 << SYS_open
+ *
+ * Interposing 2 syscalls SYS_open and SYS_write
+ * 1 << SYS_open | 1 << SYS_write
+ *
+ */
+uint64
+sys_interpose(void)
+{
+  // set interpose mask
+  struct proc *p = myproc();
+  arguint(0, &p->interpose_mask);
+
+  // set path
+  if (argstr(1, p->path, MAXPATH) == -1) {
+    return -1;
+  };
+
+  return 1;
+}
