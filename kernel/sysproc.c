@@ -64,6 +64,25 @@ sys_sbrk(void)
   return addr;
 }
 
+/*
+ * Returns available virtual address headroom. Does not necessarily
+ * mean all is physically available.
+ */
+uint64
+sys_vamemavail(void)
+{
+  return TRAPFRAME - myproc()->sz;
+}
+
+/*
+ * Returns available physical memory.
+ */
+uint64
+sys_memavail(void)
+{
+  return kmemavail();
+}
+
 uint64
 sys_pause(void)
 {
