@@ -301,6 +301,12 @@ kfork(void)
   np->state = RUNNABLE;
   release(&np->lock);
 
+  // copy interpose mask and path
+  acquire(&np->lock);
+  np->interpose_mask = p->interpose_mask;
+  memcpy(np->path, p->path, sizeof(p->path));
+  release(&np->lock);
+
   return pid;
 }
 

@@ -80,6 +80,12 @@ argstr(int n, char *buf, int max)
   return fetchstr(addr, buf, max);
 }
 
+void
+arguint(int n, uint *out)
+{
+  *out = argraw(n);
+}
+
 // Prototypes for the functions that handle system calls.
 extern uint64 sys_fork(void);
 extern uint64 sys_exit(void);
@@ -105,6 +111,7 @@ extern uint64 sys_close(void);
 extern uint64 sys_sync(void);
 extern uint64 sys_memavail(void);
 extern uint64 sys_vamemavail(void);
+extern uint64 sys_interpose(void);
 
 // An array mapping syscall numbers from syscall.h
 // to the function that handles the system call.
@@ -134,6 +141,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_sync]       sys_sync,
   [SYS_memavail]   sys_memavail,
   [SYS_vamemavail] sys_vamemavail,
+  [SYS_interpose]  sys_interpose,
   // clang-format on
 };
 
@@ -145,6 +153,30 @@ syscall(void)
 
   num = p->trapframe->a7;
   if (num > 0 && num < NELEM(syscalls) && syscalls[num]) {
+    // Restrict syscall if interpose is set
+    if (p->interpose_mask != 0) {
+      if (p->interpose_mask & (1 << num)) {
+        if (num == SYS_open || num == SYS_exec) {
+          char path[MAXPATH];
+          if (argstr(0, path, MAXPATH) == -1) {
+            p->trapframe->a0 = -1;
+            return;
+          }
+
+          printk("path: %s\n", path);
+          printk("interpose path: %s\n", p->path);
+
+          if (strncmp(p->path, path, MAXPATH) == 0) {
+            p->trapframe->a0 = syscalls[num]();
+            return;
+          }
+        }
+        // Reject syscall if flipped on
+        printk("rejecting syscall %d\n", num);
+        p->trapframe->a0 = -1;
+        return;
+      }
+    }
     // Use num to lookup the system call function for num, call it,
     // and store its return value in p->trapframe->a0
     p->trapframe->a0 = syscalls[num]();

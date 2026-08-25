@@ -45,3 +45,4 @@ entry("uptime");
 entry("sync");
 entry("memavail");
 entry("vamemavail");
+entry("interpose");
