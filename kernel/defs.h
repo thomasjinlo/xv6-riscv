@@ -124,6 +124,7 @@ void            initsleeplock(struct sleeplock*, char*);
 
 // string.c
 int             memcmp(const void*, const void*, uint);
+void            memcpy(void *dst, const void *src, uint n);
 void*           memmove(void*, const void*, uint);
 void*           memset(void*, int, uint);
 char*           safestrcpy(char*, const char*, int);
@@ -133,6 +134,7 @@ char*           strncpy(char*, const char*, int);
 
 // syscall.c
 void            argint(int, int*);
+void            arguint(int, uint*);
 int             argstr(int, char*, int);
 void            argaddr(int, uint64 *);
 int             fetchstr(uint64, char*, int);

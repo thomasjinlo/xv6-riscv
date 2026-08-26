@@ -29,6 +29,7 @@ int uptime(void);
 int sync(void);
 uint64 vamemavail(void);
 uint64 memavail(void);
+int interpose(uint32, const char *);
 
 // ulib.c
 int stat(const char *, struct stat *);
