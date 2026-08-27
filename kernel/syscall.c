@@ -163,8 +163,8 @@ syscall(void)
             return;
           }
 
-          printk("path: %s\n", path);
-          printk("interpose path: %s\n", p->path);
+          printf("path: %s\n", path);
+          printf("interpose path: %s\n", p->path);
 
           if (strncmp(p->path, path, MAXPATH) == 0) {
             p->trapframe->a0 = syscalls[num]();
@@ -172,7 +172,7 @@ syscall(void)
           }
         }
         // Reject syscall if flipped on
-        printk("rejecting syscall %d\n", num);
+        printf("rejecting syscall %d\n", num);
         p->trapframe->a0 = -1;
         return;
       }
